@@ -1,8 +1,13 @@
 'use client'
-import React from 'react';
+import { authClient } from '@/lib/auth-client';
+import Link from 'next/link';
+import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const RegisterPage = () => {
+
+  const [isShowPassword, setShowPassword] = useState(false)
 
   const {
     register,
@@ -10,11 +15,35 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm();
 
-  const handleRegisterFunc = (data) => {
+  const handleRegisterFunc = async (data) => {
     console.log(data);
     // { name, photo, email, password, terms }
-    const {email, name,photo, password} = data;
+    const { email, name, photo, password } = data;
     console.log(name, photo);
+
+
+    const { data: res, error } = await authClient.signUp.email({
+      name: name, // required
+      email: email, // required
+      password: password, // required
+      image: photo,
+      callbackURL: "/",
+    });
+
+    console.log(res, error);
+
+    if (error) {
+      alert(`
+❌ Error: ${error.message}
+  `);
+    }
+
+    if (res) {
+      alert(`
+✅ Signup successful 🎉
+Welcome to the platform!
+  `);
+    }
   };
 
   return (
@@ -73,21 +102,39 @@ const RegisterPage = () => {
           </div>
 
           {/* Password */}
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
+
             <input
-              type="password"
+              type={isShowPassword ? "text" : "password"}
               placeholder="Enter your password"
-              {...register("password", { required: true, minLength: 6 })}
-              className="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              {...register("password", {
+                required: true,
+                minLength: {
+                  value: 6,
+                  message: "Minimum 6 characters required"
+                }
+              })}
+              className="w-full px-4 py-3 pr-12 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+
+            <span
+              onClick={() => setShowPassword(!isShowPassword)}
+              className="absolute right-4 top-[42px] cursor-pointer"
+            >
+              {isShowPassword ?  <FaEye />: <FaEyeSlash /> }
+            </span>
+
             {errors.password?.type === "required" && (
               <p className="text-red-500 text-sm">Password is required</p>
             )}
+
             {errors.password?.type === "minLength" && (
-              <p className="text-red-500 text-sm">Minimum 6 characters</p>
+              <p className="text-red-500 text-sm">
+                {errors.password.message}
+              </p>
             )}
           </div>
 
@@ -107,12 +154,14 @@ const RegisterPage = () => {
           )}
 
           {/* Button */}
+          <Link href={"/login"}>
           <button
             type="submit"
             className="w-full bg-black hover:bg-gray-800 text-white font-medium py-3.5 rounded-2xl transition-all duration-200"
           >
             Register
           </button>
+          </Link>
 
         </form>
       </div>

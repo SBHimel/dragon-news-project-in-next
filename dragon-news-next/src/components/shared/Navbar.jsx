@@ -1,14 +1,22 @@
+'use client'
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import userAvatar from '@/assets/user.png';
 import NavLink from './NavLink';
+import { authClient } from '@/lib/auth-client';
 
 const Navbar = () => {
+    const { data: session, isPending } = authClient.useSession();
+    const user = session?.user;
+
+    console.log(user,isPending);
+
+
     return (
         <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
             <div className="container mx-auto px-4 py-5 flex items-center justify-between">
-                
+
                 {/* Left Side - Logo / Brand */}
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center">
@@ -40,27 +48,38 @@ const Navbar = () => {
                 </ul>
 
                 {/* Right Side - User & Login */}
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-3">
-                        <Image 
-                            src={userAvatar} 
-                            alt="User Avatar" 
-                            width={40} 
-                            height={40}
-                            className="rounded-full border border-gray-200"
-                        />
-                        <div className="hidden sm:block">
-                            <p className="text-sm font-medium text-gray-700">S.B. Himel</p>
-                            <p className="text-xs text-gray-500 -mt-0.5">Welcome back</p>
-                        </div>
-                    </div>
+                {
+                   isPending ? ( <span className="loading loading-spinner loading-lg"></span>
+ )
+                   :
+                   user ? (
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3">
+                                <Image
+                                    src={user.image}
+                                    alt="User Avatar"
+                                    width={40}
+                                    height={40}
+                                    className="rounded-full border border-gray-200"
+                                />
+                                <div className="hidden sm:block">
+                                    <p className="text-sm font-medium text-gray-700">{user.name}</p>
+                                    <p className="text-xs text-gray-500 -mt-0.5">{user.email}</p>
+                                </div>
+                            </div>
 
-                    <Link href="/login">
-                        <button className="btn bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md">
-                            Login
-                        </button>
-                    </Link>
-                </div>
+                            <button onClick={async()=>{
+                                await authClient.signOut()
+                            }} className="btn bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md">Logout</button>
+                        </div>
+                    ) : (
+                        <Link href="/login">
+                            <button className="btn bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md">
+                                Login
+                            </button>
+                        </Link>
+                    )
+                }
 
             </div>
         </nav>
