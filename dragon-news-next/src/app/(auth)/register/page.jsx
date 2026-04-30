@@ -1,6 +1,7 @@
 'use client'
 import { authClient } from '@/lib/auth-client';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -15,36 +16,29 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm();
 
-  const handleRegisterFunc = async (data) => {
-    console.log(data);
-    // { name, photo, email, password, terms }
-    const { email, name, photo, password } = data;
-    console.log(name, photo);
+ const router = useRouter(); // এটি ফাংশনের একদম উপরে (RegisterPage এর ভেতর) ডিফাইন করবেন
 
+const handleRegisterFunc = async (data) => {
+    const { email, name, photo, password } = data;
 
     const { data: res, error } = await authClient.signUp.email({
-      name: name, // required
-      email: email, // required
-      password: password, // required
+      name: name,
+      email: email,
+      password: password,
       image: photo,
       callbackURL: "/",
     });
 
-    console.log(res, error);
-
     if (error) {
-      alert(`
-❌ Error: ${error.message}
-  `);
+      alert(`❌ Error: ${error.message}`);
     }
 
     if (res) {
-      alert(`
-✅ Signup successful 🎉
-Welcome to the platform!
-  `);
+      alert(`✅ Signup successful 🎉`);
+      // এই লাইনটি যোগ করুন যাতে রেজিস্ট্রেশন শেষে লগইন পেজে নিয়ে যায়
+      router.push('/login'); 
     }
-  };
+};
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
@@ -124,7 +118,7 @@ Welcome to the platform!
               onClick={() => setShowPassword(!isShowPassword)}
               className="absolute right-4 top-[42px] cursor-pointer"
             >
-              {isShowPassword ?  <FaEye />: <FaEyeSlash /> }
+              {isShowPassword ? <FaEye /> : <FaEyeSlash />}
             </span>
 
             {errors.password?.type === "required" && (
@@ -154,14 +148,17 @@ Welcome to the platform!
           )}
 
           {/* Button */}
-          <Link href={"/login"}>
+          {/* Button */}
           <button
             type="submit"
             className="w-full bg-black hover:bg-gray-800 text-white font-medium py-3.5 rounded-2xl transition-all duration-200"
           >
             Register
           </button>
-          </Link>
+
+          <p className="text-center text-sm text-gray-600 mt-4">
+            Already have an account? <Link href="/login" className="text-blue-600 font-bold">Login</Link>
+          </p>
 
         </form>
       </div>
