@@ -1,7 +1,7 @@
 # 📰 Dragon News - Dynamic News Portal
 
 <p align="center">
-  <img width="800" alt="Dragon News Banner" src="https://github.com/user-attachments/assets/a8112d03-d5bc-4fbf-8acc-2eb579e6381b" />
+  <img width="1333" height="889" alt="Screenshot 2026-05-14 084020" src="https://github.com/user-attachments/assets/c81ed557-29ee-453a-99b9-11265619246b" />
 </p>
 
 Dragon News is a modern, fast, and fully responsive news application. It allows users to browse news across various categories like Breaking News, Regular News, International, Sports, and more. Built with a focus on performance and SEO using Next.js.
