@@ -46,3 +46,6 @@ Project-ti apnar local machine-e run korte nicher steps-gulo follow korun:
 1. **Repository Clone korun:**
    ```bash
    git clone [https://github.com/SBHimel/dragon-news-project-in-next.git](https://github.com/SBHimel/dragon-news-project-in-next.git)
+
+
+<p align="center">Made with ❤️ by <b>SBHimel</b></p>
